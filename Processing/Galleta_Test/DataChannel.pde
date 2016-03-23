@@ -1,18 +1,23 @@
 public class DataChannel {
   ArrayList<Float> mDataPoints;
-  String name;
+  String channelName;
+  String sessionName;
 
-  int MIN_RADIUS = 10;  // in pixels
-  int MAX_RADIUS = 340; // in pixels
-  int TEXT_SIZE = 24;
+  PGraphics mDrawing = null;
 
-  public DataChannel(Table aTable, int cColumn) {
+  int IMAGE_SIZE = 500;
+  int MIN_RADIUS = 10;
+  int MAX_RADIUS = IMAGE_SIZE/2-MIN_RADIUS;
+  int TEXT_SIZE = 20;
+
+  public DataChannel(Table aTable, int cColumn, String sname) {
     int numRows = aTable.getRowCount();
     int minVal = aTable.getInt(0, cColumn);
     int maxVal = minVal;
 
     mDataPoints = new ArrayList<Float>();
-    name = aTable.getColumnTitle(cColumn);
+    channelName = aTable.getColumnTitle(cColumn);
+    sessionName = sname;
 
     for (int i=0; i<numRows; i++) {
       int v = aTable.getInt(i, cColumn);
@@ -26,33 +31,45 @@ public class DataChannel {
     }
   }
 
-  public void draw() {
-    background(0);
-    stroke(255);
-    noFill();
-    textSize(TEXT_SIZE);
+  private void createDrawing() {
+    mDrawing = createGraphics(IMAGE_SIZE, IMAGE_SIZE);
+    mDrawing.beginDraw();
+
+    mDrawing.background(0);
+    mDrawing.stroke(255);
+    mDrawing.noFill();
 
     float angleStep = TWO_PI/mDataPoints.size();
     float cAngle = 0*angleStep;
     float cRadius = MIN_RADIUS+mDataPoints.get(0)*MAX_RADIUS;
     PVector lastPoint = new PVector(cRadius*cos(cAngle), cRadius*sin(cAngle));
 
-    pushMatrix();
+    mDrawing.pushMatrix();
     {
-      translate(width/2, height/2);
-      ellipse(0, 0, MIN_RADIUS, MIN_RADIUS);
+      mDrawing.translate(IMAGE_SIZE/2, IMAGE_SIZE/2);
+      mDrawing.ellipse(0, 0, MIN_RADIUS, MIN_RADIUS);
       for (int i=0; i<mDataPoints.size(); i++) {
         cAngle = i*angleStep;
         cRadius = MIN_RADIUS+mDataPoints.get(i)*MAX_RADIUS;
-        line(lastPoint.x, lastPoint.y, cRadius*cos(cAngle), cRadius*sin(cAngle));
+        mDrawing.line(lastPoint.x, lastPoint.y, cRadius*cos(cAngle), cRadius*sin(cAngle));
         lastPoint.set(cRadius*cos(cAngle), cRadius*sin(cAngle));
       }
       cAngle = 0*angleStep;
       cRadius = MIN_RADIUS+mDataPoints.get(0)*MAX_RADIUS;
-      line(lastPoint.x, lastPoint.y, cRadius*cos(cAngle), cRadius*sin(cAngle));
+      mDrawing.line(lastPoint.x, lastPoint.y, cRadius*cos(cAngle), cRadius*sin(cAngle));
     }
-    popMatrix();
+    mDrawing.popMatrix();
 
-    text(name, width-textWidth(name)-TEXT_SIZE, TEXT_SIZE);
+    mDrawing.textSize(TEXT_SIZE*0.66);
+    mDrawing.text(sessionName, TEXT_SIZE*0.66, TEXT_SIZE*0.66);
+    mDrawing.textSize(TEXT_SIZE);
+    mDrawing.text(channelName, IMAGE_SIZE-textWidth(channelName)-TEXT_SIZE, TEXT_SIZE);
+
+    mDrawing.endDraw();
+  }
+
+  public void draw() {
+    if (mDrawing == null) this.createDrawing();
+    image(mDrawing, 0, 0);
   }
 }

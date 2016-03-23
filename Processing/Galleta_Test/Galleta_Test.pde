@@ -17,8 +17,6 @@ void setup() {
       mSessions.add(new Session(DATA_LOCATION+"/"+file));
     }
   }
-
-  mSessions.get(cSession).draw();
 }
 
 void keyReleased() {
@@ -35,9 +33,9 @@ void keyReleased() {
     } else if (keyCode == LEFT) {
       cChannel = cChannel-1;
     }
-    mSessions.get(cSession%mSessions.size()).draw(cChannel);
   }
 }
 
 void draw() {
+  mSessions.get(cSession%mSessions.size()).draw(cChannel);
 }
