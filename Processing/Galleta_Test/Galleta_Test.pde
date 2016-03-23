@@ -4,8 +4,10 @@ ArrayList<Session> mSessions;
 int cSession = 0;
 int cChannel = 0;
 
+int mode = 1;
+
 void setup() {
-  size(700, 700);
+  size(1050, 700);
 
   mSessions = new ArrayList<Session>();
 
@@ -37,5 +39,27 @@ void keyReleased() {
 }
 
 void draw() {
-  mSessions.get(cSession%mSessions.size()).draw(cChannel);
+  if (mode == 0) {
+    background(0);
+    translate((width-700)/2, 0);
+    mSessions.get(cSession%mSessions.size()).draw(cChannel);
+  } else if (mode == 1) {
+    scale(0.5);
+    pushMatrix();
+    translate(0, 0);
+    mSessions.get(cSession%mSessions.size()).draw(1);
+    translate(700, 0);
+    mSessions.get(cSession%mSessions.size()).draw(2);
+    translate(700, 0);
+    mSessions.get(cSession%mSessions.size()).draw(3);
+    popMatrix();
+    translate(0, 700);
+    mSessions.get(cSession%mSessions.size()).draw(4);
+    translate(700, 0);
+    mSessions.get(cSession%mSessions.size()).draw(5);
+    translate(700, 0);
+    mSessions.get(cSession%mSessions.size()).draw(6);
+  } else if (mode == 2) {
+    // draw all images of current channel
+  }
 }

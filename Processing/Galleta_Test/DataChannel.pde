@@ -5,15 +5,15 @@ public class DataChannel {
 
   PGraphics mDrawing = null;
 
-  int IMAGE_SIZE = 500;
-  int MIN_RADIUS = 10;
+  int IMAGE_SIZE = 700;
+  int MIN_RADIUS = 50;
   int MAX_RADIUS = IMAGE_SIZE/2-MIN_RADIUS;
-  int TEXT_SIZE = 20;
+  int TEXT_SIZE = 24;
 
   public DataChannel(Table aTable, int cColumn, String sname) {
     int numRows = aTable.getRowCount();
     int minVal = aTable.getInt(0, cColumn);
-    int maxVal = minVal;
+    int maxVal = aTable.getInt(0, cColumn);
 
     mDataPoints = new ArrayList<Float>();
     channelName = aTable.getColumnTitle(cColumn);
@@ -38,6 +38,7 @@ public class DataChannel {
     mDrawing.background(0);
     mDrawing.stroke(255);
     mDrawing.noFill();
+    mDrawing.textSize(TEXT_SIZE);
 
     float angleStep = TWO_PI/mDataPoints.size();
     float cAngle = 0*angleStep;
@@ -47,7 +48,7 @@ public class DataChannel {
     mDrawing.pushMatrix();
     {
       mDrawing.translate(IMAGE_SIZE/2, IMAGE_SIZE/2);
-      mDrawing.ellipse(0, 0, MIN_RADIUS, MIN_RADIUS);
+      mDrawing.ellipse(0, 0, MIN_RADIUS*2, MIN_RADIUS*2);
       for (int i=0; i<mDataPoints.size(); i++) {
         cAngle = i*angleStep;
         cRadius = MIN_RADIUS+mDataPoints.get(i)*MAX_RADIUS;
@@ -60,9 +61,7 @@ public class DataChannel {
     }
     mDrawing.popMatrix();
 
-    mDrawing.textSize(TEXT_SIZE*0.66);
-    mDrawing.text(sessionName, TEXT_SIZE*0.66, TEXT_SIZE*0.66);
-    mDrawing.textSize(TEXT_SIZE);
+    mDrawing.text(sessionName, TEXT_SIZE, TEXT_SIZE);
     mDrawing.text(channelName, IMAGE_SIZE-textWidth(channelName)-TEXT_SIZE, TEXT_SIZE);
 
     mDrawing.endDraw();
