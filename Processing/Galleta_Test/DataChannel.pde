@@ -5,7 +5,6 @@ public class DataChannel {
 
   PGraphics mDrawing = null;
 
-  int IMAGE_SIZE = 700;
   int MIN_RADIUS = 50;
   int MAX_RADIUS = IMAGE_SIZE/2-MIN_RADIUS;
   int TEXT_SIZE = 24;

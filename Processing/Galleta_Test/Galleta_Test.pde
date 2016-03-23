@@ -1,10 +1,10 @@
 String DATA_LOCATION = "../../EEGdata";
+int IMAGE_SIZE = 700;
 
 ArrayList<Session> mSessions;
 int cSession = 0;
 int cChannel = 0;
-
-int mode = 2;
+int cMode = 0;
 
 void setup() {
   size(1050, 700);
@@ -25,55 +25,39 @@ void keyReleased() {
   if (key == CODED) {
     if (keyCode == UP) {
       cSession = cSession + 1;
-      cChannel = 0;
     } else if (keyCode == DOWN) {
       cSession = cSession - 1;
       if (cSession<0) cSession += mSessions.size();
-      cChannel = 0;
     } else if (keyCode == RIGHT) {
       cChannel = cChannel+1;
     } else if (keyCode == LEFT) {
       cChannel = cChannel-1;
     }
+  } else if (key == ' ') {
+    cMode = (cMode+1)%3;
   }
 }
 
 void draw() {
-  if (mode == 0) {
+  if (cMode == 0) {
     background(0);
-    translate((width-700)/2, 0);
+    translate((width-IMAGE_SIZE)/2, 0);
     mSessions.get(cSession%mSessions.size()).draw(cChannel);
-  } else if (mode == 1) {
+  } else if (cMode == 1) {
     scale(0.5);
-    pushMatrix();
-    translate(0, 0);
-    mSessions.get(cSession%mSessions.size()).draw(1);
-    translate(700, 0);
-    mSessions.get(cSession%mSessions.size()).draw(2);
-    translate(700, 0);
-    mSessions.get(cSession%mSessions.size()).draw(3);
-    popMatrix();
-    translate(0, 700);
-    mSessions.get(cSession%mSessions.size()).draw(4);
-    translate(700, 0);
-    mSessions.get(cSession%mSessions.size()).draw(5);
-    translate(700, 0);
-    mSessions.get(cSession%mSessions.size()).draw(6);
-  } else if (mode == 2) {
+    for (int i=0; i<6; i++) {
+      pushMatrix();
+      translate((i%3)*IMAGE_SIZE, (i/3)*IMAGE_SIZE);
+      mSessions.get(cSession%mSessions.size()).draw(i+1);
+      popMatrix();
+    }
+  } else if (cMode == 2) {
     scale(0.5);
-    pushMatrix();
-    translate(0, 0);
-    mSessions.get(0).draw(cChannel);
-    translate(700, 0);
-    mSessions.get(1).draw(cChannel);
-    translate(700, 0);
-    mSessions.get(2).draw(cChannel);
-    popMatrix();
-    translate(0, 700);
-    mSessions.get(3).draw(cChannel);
-    translate(700, 0);
-    mSessions.get(4).draw(cChannel);
-    translate(700, 0);
-    mSessions.get(5).draw(cChannel);
+    for (int i=0; i<6; i++) {
+      pushMatrix();
+      translate((i%3)*IMAGE_SIZE, (i/3)*IMAGE_SIZE);
+      mSessions.get((cSession+i)%mSessions.size()).draw(cChannel);
+      popMatrix();
+    }
   }
 }
