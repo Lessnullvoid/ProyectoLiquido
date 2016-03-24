@@ -1,17 +1,14 @@
 public class Session {
   ArrayList<DataChannel> mChannels;
-  String name;
-
-  int TEXT_SIZE = 24;
 
   public Session(String file) {
     mChannels = new ArrayList<DataChannel>();
 
     Table mTable = loadTable(file, "header");
-    name = file.substring(file.lastIndexOf("/")+1);
+    String name = file.substring(file.lastIndexOf("/")+1);
 
     for (int i=0; i<mTable.getColumnCount(); i++) {
-      mChannels.add(new DataChannel(mTable, i));
+      mChannels.add(new DataChannel(mTable, i, name));
     }
   }
 
@@ -20,7 +17,6 @@ public class Session {
     channel = channel%mChannels.size();
 
     mChannels.get(channel).draw();
-    text(name, TEXT_SIZE, TEXT_SIZE);
   }
 
   public void draw() {

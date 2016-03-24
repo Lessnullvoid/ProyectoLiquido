@@ -1,11 +1,13 @@
 String DATA_LOCATION = "../../EEGdata";
+int IMAGE_SIZE = 700;
 
 ArrayList<Session> mSessions;
 int cSession = 0;
 int cChannel = 0;
+int cMode = 0;
 
 void setup() {
-  size(700, 700);
+  size(1050, 700);
 
   mSessions = new ArrayList<Session>();
 
@@ -17,27 +19,45 @@ void setup() {
       mSessions.add(new Session(DATA_LOCATION+"/"+file));
     }
   }
-
-  mSessions.get(cSession).draw();
 }
 
 void keyReleased() {
   if (key == CODED) {
     if (keyCode == UP) {
       cSession = cSession + 1;
-      cChannel = 0;
     } else if (keyCode == DOWN) {
       cSession = cSession - 1;
       if (cSession<0) cSession += mSessions.size();
-      cChannel = 0;
     } else if (keyCode == RIGHT) {
       cChannel = cChannel+1;
     } else if (keyCode == LEFT) {
       cChannel = cChannel-1;
     }
-    mSessions.get(cSession%mSessions.size()).draw(cChannel);
+  } else if (key == ' ') {
+    cMode = (cMode+1)%3;
   }
 }
 
 void draw() {
+  if (cMode == 0) {
+    background(0);
+    translate((width-IMAGE_SIZE)/2, 0);
+    mSessions.get(cSession%mSessions.size()).draw(cChannel);
+  } else if (cMode == 1) {
+    scale(0.5);
+    for (int i=0; i<6; i++) {
+      pushMatrix();
+      translate((i%3)*IMAGE_SIZE, (i/3)*IMAGE_SIZE);
+      mSessions.get(cSession%mSessions.size()).draw(i+1);
+      popMatrix();
+    }
+  } else if (cMode == 2) {
+    scale(0.5);
+    for (int i=0; i<6; i++) {
+      pushMatrix();
+      translate((i%3)*IMAGE_SIZE, (i/3)*IMAGE_SIZE);
+      mSessions.get((cSession+i)%mSessions.size()).draw(cChannel);
+      popMatrix();
+    }
+  }
 }
