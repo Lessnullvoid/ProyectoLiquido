@@ -10,7 +10,7 @@ const byte LASER = 9;
 int reading;
 int value;
 int inputPin = A4;
-int ambiente;
+int ambientLight;
 
 void setup() {
   Serial.begin(9600);
@@ -24,7 +24,7 @@ void setup() {
     delay(1);
   }
 
-ambiente = sum / numReadings;
+ambientLight = sum / numReadings;
 
 }
 
@@ -36,7 +36,7 @@ void loop() {
 
   //Sensor smoothing 
   total= total - readings[index];         
-  readings[index] = analogRead(4) - ambiente; 
+  readings[index] = analogRead(4) - ambientLight; 
   total= total + readings[index];       
   index = index + 1;                    
 
