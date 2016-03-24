@@ -5,8 +5,14 @@ int index = 0;                  // the index of the current reading
 int total = 0;                  // the running total
 int average = 0;                // the average
 
+//ADD ARRAY OF LASERS
+//ADD ARRAY OF RECEIVERS
+//CONTROL STEPER SPEED
+
 const byte POTENTIOMETER = 0;
+const byte MOTORCONTROL = 3;
 const byte LASER = 9;
+const byte MOTOR = 10;
 int reading;
 int value;
 int inputPin = A4;
@@ -47,7 +53,10 @@ void loop() {
   average = total / numReadings;         
   Serial.println(average); 
   Serial.print("\n Photoresistor:");  
-  delay(1);        
+  delay(1); 
+  
+  
+  //agregar libreria y controlar el motor por driver 
 
 }
 
