@@ -58,7 +58,7 @@ void build() {
     // points per level
     for (int j=0; j<thisChannel.size (); j++) {
       float cAngle = j*angleStep;
-      float cRadius = MIN_RADIUS+thisChannel.get(j)*MAX_RADIUS;
+      float cRadius = MIN_RADIUS+thisChannel.get(j)*(MAX_RADIUS-MIN_RADIUS);
       UVertex uv = new UVertex(cRadius, 0).rotY(cAngle);
       tmp.add(uv);
       tmp2.add(uv);
