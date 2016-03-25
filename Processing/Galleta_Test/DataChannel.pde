@@ -17,8 +17,8 @@ public class DataChannel {
 
   public DataChannel(Table aTable, int cColumn, String sname) {
     int numRows = aTable.getRowCount();
-    int minVal = aTable.getInt(0, cColumn);
-    int maxVal = aTable.getInt(0, cColumn);
+    float minVal = aTable.getFloat(0, cColumn);
+    float maxVal = aTable.getFloat(0, cColumn);
 
     rawPoints = new ArrayList<Float>();
     avgPoints = new ArrayList<Float>();
@@ -29,8 +29,8 @@ public class DataChannel {
     sessionName = sname;
 
     for (int i=0; i<numRows; i++) {
-      int v = aTable.getInt(i, cColumn);
-      rawPoints.add(float(v));
+      float v = aTable.getFloat(i, cColumn);
+      rawPoints.add(v);
       if (v<minVal) minVal = v;
       if (v>maxVal) maxVal = v;
     }

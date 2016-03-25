@@ -2,8 +2,8 @@ import unlekker.mb2.geo.*;
 import unlekker.mb2.util.*;
 import ec.util.*;
 
-String DATA_LOCATION = "../../EEGdata";
-String FILENAME = "20160315_Contesina.csv";
+String DATA_LOCATION = "../../EEGdata/EEGDATA_ReducFilterIC";
+String FILENAME = "Contesina_RF_ICA.csv";
 
 int MIN_RADIUS = 35;
 int MAX_RADIUS = 70;
