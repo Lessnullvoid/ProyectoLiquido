@@ -8,6 +8,7 @@ String FILENAME = "Contesina_RF_ICA.csv";
 int MIN_RADIUS = 35;
 int MAX_RADIUS = 70;
 int MAX_HEIGHT = 150;
+int MAX_THICKNESS = 3;
 
 UGeo model;
 UNav3D nav;
@@ -76,12 +77,10 @@ void build() {
   //model = new UGeo().quadstrip(stack);
   model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
 
-  // give outer surface a thickness
-  //model.extrudeSelf(10, true);
-  // or close it on top and bottom
-  // TODO: this
-
-  //model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
+  // close the bottom, give outer surface a thickness, write STL
+  model.triangleFan(stack.get(stack.size()-1));
+  model.extrudeSelf(MAX_THICKNESS, true);
+  model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
 }
 
 void draw() {
@@ -94,9 +93,5 @@ void draw() {
   stroke(255);
   fill(255);
   model.draw();
-
-  // draw face normals in red
-  stroke(255, 0, 0);
-  //model.drawNormals(50);
 }
 
