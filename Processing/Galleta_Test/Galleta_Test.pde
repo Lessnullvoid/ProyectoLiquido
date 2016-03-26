@@ -1,4 +1,4 @@
-String DATA_LOCATION = "../../EEGdata";
+String DATA_LOCATION = "../../EEGdata/EEGDATA_ReducFilterIC";
 int IMAGE_SIZE = 700;
 
 ArrayList<Session> mSessions;
@@ -15,7 +15,7 @@ void setup() {
   File dir = new File(sketchPath(DATA_LOCATION));
 
   for (String file : dir.list()) {
-    if (file.endsWith(".csv")) {
+    if (file.endsWith("ICA.csv")) {
       mSessions.add(new Session(DATA_LOCATION+"/"+file));
     }
   }
@@ -61,3 +61,4 @@ void draw() {
     }
   }
 }
+

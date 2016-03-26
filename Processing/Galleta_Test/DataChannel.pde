@@ -2,7 +2,9 @@ public class DataChannel {
   ArrayList<Float> rawPoints;
   ArrayList<Float> avgPoints;
   ArrayList<Float> maxPoints;
+  ArrayList<Float> lpfPoints;
   int AVG_SIZE = 50;
+  float LPF_ALPHA = 0.25;
 
   String channelName;
   String sessionName;
@@ -15,19 +17,20 @@ public class DataChannel {
 
   public DataChannel(Table aTable, int cColumn, String sname) {
     int numRows = aTable.getRowCount();
-    int minVal = aTable.getInt(0, cColumn);
-    int maxVal = aTable.getInt(0, cColumn);
+    float minVal = aTable.getFloat(0, cColumn);
+    float maxVal = aTable.getFloat(0, cColumn);
 
     rawPoints = new ArrayList<Float>();
     avgPoints = new ArrayList<Float>();
     maxPoints = new ArrayList<Float>();
+    lpfPoints = new ArrayList<Float>();
 
     channelName = aTable.getColumnTitle(cColumn);
     sessionName = sname;
 
     for (int i=0; i<numRows; i++) {
-      int v = aTable.getInt(i, cColumn);
-      rawPoints.add(float(v));
+      float v = aTable.getFloat(i, cColumn);
+      rawPoints.add(v);
       if (v<minVal) minVal = v;
       if (v>maxVal) maxVal = v;
     }
@@ -46,6 +49,12 @@ public class DataChannel {
       avgPoints.add(sum/AVG_SIZE);
       maxPoints.add(max);
     }
+
+    lpfPoints.add(avgPoints.get(0));
+    for (int i=1; i<avgPoints.size(); i++) {
+      float yi_1 = lpfPoints.get(i-1);
+      lpfPoints.add(yi_1 + LPF_ALPHA*(avgPoints.get(i) - yi_1));
+    }
   }
 
   private void createDrawing() {
@@ -60,21 +69,20 @@ public class DataChannel {
     mDrawing.text(channelName, IMAGE_SIZE-textWidth(channelName)-TEXT_SIZE, TEXT_SIZE);
     mDrawing.endDraw();
 
-    mDrawing.beginDraw();
     mDrawing.stroke(255);
-    mDrawing.endDraw();
     drawPoints(rawPoints);
 
-    mDrawing.beginDraw();
-    mDrawing.stroke(255,0,0);
-    mDrawing.endDraw();
+    mDrawing.stroke(255, 0, 0);
     drawPoints(avgPoints);
 
-    mDrawing.beginDraw();
-    mDrawing.stroke(0,255,0);
-    mDrawing.endDraw();
-    drawPoints(maxPoints);
-}
+    mDrawing.stroke(0, 255, 0);
+    //drawPoints(maxPoints);
+
+    mDrawing.stroke(255, 0, 255);
+    mDrawing.strokeWeight(4);
+    drawPoints(lpfPoints);
+    mDrawing.strokeWeight(1);
+  }
 
   private void drawPoints(ArrayList<Float> points) {
     float angleStep = TWO_PI/points.size();
@@ -107,3 +115,4 @@ public class DataChannel {
     image(mDrawing, 0, 0);
   }
 }
+
