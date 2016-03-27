@@ -15,10 +15,7 @@ int control = 6;
 void setup()
 {
   Serial.begin(9600);
-
   int sum = 0;
-
-  
   for (i = 0; i < NUMSENSORS; i++)
   {
     for (j = 0; j < NUMREADINGS; j++)
@@ -30,7 +27,6 @@ void setup()
   }
 
   ambientLight = sum / NUMREADINGS;
-
 }
 
 void loop()
@@ -63,5 +59,5 @@ void loop()
   average[i] = total / NUMSENSORS;
 
   //totalAverage = total / NUMSENSORS;
-  Serial.println(average[i]);      
+  Serial.println(readings[i][0]);      
 }
