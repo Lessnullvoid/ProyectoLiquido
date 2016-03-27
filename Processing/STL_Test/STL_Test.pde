@@ -9,6 +9,7 @@ int MIN_RADIUS = 35;
 int MAX_RADIUS = 70;
 int MAX_HEIGHT = 150;
 int MAX_THICKNESS = 3;
+int PLUG_DIMENSION = 10;
 
 UGeo model;
 UNav3D nav;
@@ -86,15 +87,20 @@ void build() {
   tmp.translate(0, MAX_HEIGHT);
   stack.add(tmp.close());
 
-  // center stacked edges as a single entity  
-  UVertexList.center(stack);
-
   // add UGeo created from quadstrips of the stacked edges 
   //model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
   model = new UGeo().quadstrip(stack);
 
-  // give outer surface a thickness and write STL
+  // give outer surface a thickness
   model.extrudeSelf(MAX_THICKNESS, true);
+
+  // put plugs in the bottom
+  float cubeCenterY = stack.get(stack.size()-1).get(0).y+PLUG_DIMENSION*0.5-2f;
+  model.add(UGeo.box(PLUG_DIMENSION).translate(0,cubeCenterY,0));
+  model.add(UGeo.box(PLUG_DIMENSION).translate(2*PLUG_DIMENSION,cubeCenterY,0));
+  model.add(UGeo.box(PLUG_DIMENSION).translate(-2*PLUG_DIMENSION,cubeCenterY,0));
+
+  //write STL
   model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
 }
 
