@@ -16,7 +16,7 @@ UNav3D nav;
 Session mSession;
 
 void setup() {
-  size(600, 600, OPENGL);  
+  size(600, 600, OPENGL);
 
   // initialize ModelbuilderMk2 and add navigation
   UMB.setPApplet(this);
@@ -29,14 +29,14 @@ void setup() {
 
 void build() {
   // create randomized mesh form from a stack of edges
-  ArrayList<UVertexList> stack=new ArrayList<UVertexList>();
+  ArrayList<UVertexList> stack = new ArrayList<UVertexList>();
 
   int dataLayers = mSession.mChannels.size();
 
   // levels
   for (int i=1; i<dataLayers; i++) {
-    UVertexList tmp=new UVertexList();
-    UVertexList tmp2=new UVertexList();
+    UVertexList tmp = new UVertexList();
+    UVertexList tmp2 = new UVertexList();
 
     ArrayList<Float> thisChannel = mSession.mChannels.get(i).lpfPoints;
 
@@ -70,15 +70,30 @@ void build() {
     stack.add(tmp2.close());
   }
 
+  // smooth the data layers
+  stack = UVertexList.smooth(stack, 1);
+
+  // add a bottom manually, made up of a quadstrip instead of triangle fan
+  UVertexList tmp = new UVertexList();
+  float numPoints = mSession.mChannels.get(0).lpfPoints.size();
+  float angleStep = TWO_PI/numPoints;
+  // points per level
+  for (int j=0; j<numPoints; j++) {
+    float cAngle = j*angleStep;
+    float cRadius = 0.01*MIN_RADIUS;
+    tmp.add(new UVertex(cRadius, 0).rotY(cAngle));
+  }
+  tmp.translate(0, MAX_HEIGHT);
+  stack.add(tmp.close());
+
   // center stacked edges as a single entity  
   UVertexList.center(stack);
 
   // add UGeo created from quadstrips of the stacked edges 
-  //model = new UGeo().quadstrip(stack);
-  model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
+  //model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
+  model = new UGeo().quadstrip(stack);
 
-  // close the bottom, give outer surface a thickness, write STL
-  model.triangleFan(stack.get(stack.size()-1));
+  // give outer surface a thickness and write STL
   model.extrudeSelf(MAX_THICKNESS, true);
   model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
 }
