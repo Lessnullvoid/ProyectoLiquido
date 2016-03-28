@@ -9,6 +9,7 @@ int MIN_RADIUS = 35;
 int MAX_RADIUS = 70;
 int MAX_HEIGHT = 150;
 int MAX_THICKNESS = 3;
+int PLUG_DIMENSION = 10;
 
 UGeo model;
 UNav3D nav;
@@ -16,7 +17,7 @@ UNav3D nav;
 Session mSession;
 
 void setup() {
-  size(600, 600, OPENGL);  
+  size(600, 600, OPENGL);
 
   // initialize ModelbuilderMk2 and add navigation
   UMB.setPApplet(this);
@@ -29,14 +30,14 @@ void setup() {
 
 void build() {
   // create randomized mesh form from a stack of edges
-  ArrayList<UVertexList> stack=new ArrayList<UVertexList>();
+  ArrayList<UVertexList> stack = new ArrayList<UVertexList>();
 
   int dataLayers = mSession.mChannels.size();
 
   // levels
   for (int i=1; i<dataLayers; i++) {
-    UVertexList tmp=new UVertexList();
-    UVertexList tmp2=new UVertexList();
+    UVertexList tmp = new UVertexList();
+    UVertexList tmp2 = new UVertexList();
 
     ArrayList<Float> thisChannel = mSession.mChannels.get(i).lpfPoints;
 
@@ -70,16 +71,36 @@ void build() {
     stack.add(tmp2.close());
   }
 
-  // center stacked edges as a single entity  
-  UVertexList.center(stack);
+  // smooth the data layers
+  stack = UVertexList.smooth(stack, 1);
+
+  // add a bottom manually, made up of a quadstrip instead of triangle fan
+  UVertexList tmp = new UVertexList();
+  float numPoints = mSession.mChannels.get(0).lpfPoints.size();
+  float angleStep = TWO_PI/numPoints;
+  // points per level
+  for (int j=0; j<numPoints; j++) {
+    float cAngle = j*angleStep;
+    float cRadius = 0.01*MIN_RADIUS;
+    tmp.add(new UVertex(cRadius, 0).rotY(cAngle));
+  }
+  tmp.translate(0, MAX_HEIGHT);
+  stack.add(tmp.close());
 
   // add UGeo created from quadstrips of the stacked edges 
-  //model = new UGeo().quadstrip(stack);
-  model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
+  //model = new UGeo().quadstrip(UVertexList.smooth(stack, 1));
+  model = new UGeo().quadstrip(stack);
 
-  // close the bottom, give outer surface a thickness, write STL
-  model.triangleFan(stack.get(stack.size()-1));
+  // give outer surface a thickness
   model.extrudeSelf(MAX_THICKNESS, true);
+
+  // put plugs in the bottom
+  float cubeCenterY = stack.get(stack.size()-1).get(0).y+PLUG_DIMENSION*0.5-2f;
+  model.add(UGeo.box(PLUG_DIMENSION).translate(0,cubeCenterY,0));
+  model.add(UGeo.box(PLUG_DIMENSION).translate(2*PLUG_DIMENSION,cubeCenterY,0));
+  model.add(UGeo.box(PLUG_DIMENSION).translate(-2*PLUG_DIMENSION,cubeCenterY,0));
+
+  //write STL
   model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
 }
 
