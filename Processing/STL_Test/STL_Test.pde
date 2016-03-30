@@ -6,7 +6,7 @@ String DATA_LOCATION = "../../EEGdata/EEGDATA_ReducFilterIC";
 String FILENAME = "Contesina_RF_ICA.csv";
 
 int MIN_RADIUS = 35;
-int MAX_RADIUS = 70;
+int MAX_RADIUS = MIN_RADIUS*2;
 int MAX_HEIGHT = 150;
 int MAX_THICKNESS = 3;
 int PLUG_DIMENSION = 10;
