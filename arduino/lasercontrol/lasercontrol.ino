@@ -1,10 +1,17 @@
+#include <Stepper.h>
+
+
 const int numReadings = 10;
+
+#define STEPS 200
 
 int readings[numReadings];      // the readings from the analog input
 int readings2[numReadings];
 int readings3[numReadings];
 int readings4[numReadings];
 int readings5[numReadings];
+
+Stepper stepper(STEPS, 4, 5, 6, 7);
 
 int Myindex = 0; // the index of the current reading
 int Myindex2 = 0;
@@ -61,6 +68,9 @@ int ambientLight5;
 
 void setup() {
   Serial.begin(9600);
+  Serial.println("stepper runing");
+  stepper.setSpeed(30);
+  
   pinMode(LASER, OUTPUT);
   pinMode(LASER2, OUTPUT);
   pinMode(LASER3, OUTPUT);
@@ -115,7 +125,13 @@ ambientLight5 = sum5 / numReadings;
 }
 
 void loop() { 
-    //Laser control
+
+  Serial.println("Forward");
+  stepper.step(STEPS);
+  //Serial.println("Backward");
+  //stepper.step(-STEPS);
+   
+    //Laser control 
   reading = analogRead(POTENTIOMETER);
   value = map(reading, 0, 1024, 0, 255);   
   analogWrite(LASER, value);
