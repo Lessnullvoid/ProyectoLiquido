@@ -9,7 +9,7 @@ int MIN_RADIUS = 35;
 int MAX_RADIUS = MIN_RADIUS*2;
 int MAX_HEIGHT = 150;
 int MAX_THICKNESS = 3;
-int PLUG_DIMENSION = 10;
+int BOTTOM_HOLE_RADIUS = 25;
 
 UGeo model;
 UNav3D nav;
@@ -29,12 +29,12 @@ void setup() {
 }
 
 void build() {
-  // create randomized mesh form from a stack of edges
+  // stack of layers of points
   ArrayList<UVertexList> stack = new ArrayList<UVertexList>();
 
   int dataLayers = mSession.mChannels.size();
 
-  // levels
+  // for each levels/layers/channel ...
   for (int i=1; i<dataLayers; i++) {
     UVertexList tmp = new UVertexList();
     UVertexList tmp2 = new UVertexList();
@@ -81,7 +81,7 @@ void build() {
   // points per level
   for (int j=0; j<numPoints; j++) {
     float cAngle = j*angleStep;
-    float cRadius = 0.01*MIN_RADIUS;
+    float cRadius = BOTTOM_HOLE_RADIUS;
     tmp.add(new UVertex(cRadius, 0).rotY(cAngle));
   }
   tmp.translate(0, MAX_HEIGHT);
@@ -93,12 +93,6 @@ void build() {
 
   // give outer surface a thickness
   model.extrudeSelf(MAX_THICKNESS, true);
-
-  // put plugs in the bottom
-  float cubeCenterY = stack.get(stack.size()-1).get(0).y+PLUG_DIMENSION*0.5-2f;
-  model.add(UGeo.box(PLUG_DIMENSION).translate(0,cubeCenterY,0));
-  model.add(UGeo.box(PLUG_DIMENSION).translate(2*PLUG_DIMENSION,cubeCenterY,0));
-  model.add(UGeo.box(PLUG_DIMENSION).translate(-2*PLUG_DIMENSION,cubeCenterY,0));
 
   //write STL
   model.writeSTL(sketchPath(FILENAME.replace(".csv", ".stl")));
