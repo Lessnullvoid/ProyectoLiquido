@@ -3,13 +3,13 @@ import unlekker.mb2.util.*;
 import ec.util.*;
 
 String DATA_LOCATION = "../../EEGdata/EEGDATA_ReducFilterIC";
-String FILENAME = "Contesina_RF_ICA.csv";
+String FILENAME = "Mauricio_RF_ICA.csv";
 
 int MIN_RADIUS = 35;
 int MAX_RADIUS = MIN_RADIUS*2;
 int MAX_HEIGHT = 150;
 int MAX_THICKNESS = 3;
-int BOTTOM_HOLE_RADIUS = 25;
+int BOTTOM_HOLE_RADIUS = 30;
 
 UGeo model;
 UNav3D nav;
