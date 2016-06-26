@@ -59,7 +59,7 @@ void setup() {
 
 void loop() {
   //Serial.println("Forward");
-  stepper.step(STEPS);
+  //stepper.step(STEPS);
   //Serial.println("Backward");
   //stepper.step(-STEPS);
 
@@ -83,14 +83,15 @@ void loop() {
   // calculate the readingAverage and send on serial
   for (int i = 0; i < NUM_SENSORS; i++) {
     readingAverage[i] = readingSum[i] / NUM_READINGS;
-    short readingAverageShort = (short)readingAverage[i];
+    short readingAverageShort = (short)map(readingAverage[i], 0, 1023, 0, 255);
 
     // send 3 bytes per value: HHHH_HHHH AAAA_VVVV VVVV_VVVV
     // where HHHH_HHHH = 8-bit fixed header
     //       AAAA = which pin [0,15] (only need [1,5])
     //       VVVV VVVV_VVVV = 12 bits of data [0,4095] (only need [0,1023])
     serialMsg[0] = (MSG_HEADER&0xFF);
-    serialMsg[1] = ((sensorPin[i]<<4)&0xF0) | ((readingAverageShort>>8)&0x0F);
+    //serialMsg[1] = ((sensorPin[i]<<4)&0xF0) | ((readingAverageShort>>8)&0x0F);
+    serialMsg[1] = ((sensorPin[i]<<4)&0xF0);
     serialMsg[2] = (readingAverageShort&0xFF);
 
     Serial.write(serialMsg[0]);
