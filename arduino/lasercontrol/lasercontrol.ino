@@ -3,6 +3,7 @@
 const int STEPS = 200;
 const int NUM_READINGS = 10;
 const int NUM_SENSORS = 5;
+const int MSG_HEADER = 0xAB;
 
 // PINS
 int laserPin[NUM_SENSORS] = {3, 4, 5, 6, 9};  // output pins for lasers
@@ -25,10 +26,14 @@ const int MOTORCONTROL = 7;
 const int MOTOR = 10;
 Stepper stepper(STEPS, 4, 5, 6, 7);
 
+// SERIAL COMMUNICATION
+byte serialMsg[3];
+
 void setup() {
   Serial.begin(9600);
-  Serial.println("stepper runing");
+  //Serial.println("stepper runing");
   stepper.setSpeed(30);
+  serialMsg[0] = serialMsg[1] = serialMsg[2] = 0x00;
 
   // set up laser pins as output
   for (int i = 0; i < NUM_SENSORS; i++) {
@@ -53,7 +58,7 @@ void setup() {
 }
 
 void loop() {
-  Serial.println("Forward");
+  //Serial.println("Forward");
   stepper.step(STEPS);
   //Serial.println("Backward");
   //stepper.step(-STEPS);
@@ -75,18 +80,33 @@ void loop() {
       readingIndex[i] = 0;
   }
 
-  // calculate the readingAverage and print:
+  // calculate the readingAverage and send on serial
   for (int i = 0; i < NUM_SENSORS; i++) {
     readingAverage[i] = readingSum[i] / NUM_READINGS;
+
+    // send 3 bytes per value: HHHH_HHHH AAAA_VVVV VVVV_VVVV
+    // where HHHH_HHHH = 8-bit fixed header
+    //       AAAA = which pin [0,15] (only need [1,5])
+    //       VVVV VVVV_VVVV = 12 bits of data [0,4095] (only need [0,1023])
+    serialMsg[0] = (MSG_HEADER&0xFF);
+    serialMsg[1] = ((sensorPin[i]<<4)&0xF0) | ((readingAverage[i]>>8)&0x0F);
+    serialMsg[2] = (readingAverage[i]&0xFF);
+
+    Serial.write(serialMsg[0]);
+    Serial.write(serialMsg[1]);
+    Serial.write(serialMsg[2]);
+    Serial.flush();
   }
 
   // print values to serial
+  /*
   for (int i = 0; i < NUM_SENSORS; i++) {
     Serial.print("\t Sensor[");
     Serial.print(i);
     Serial.print("]: ");
     Serial.print(readingAverage[i]);
   }
+  */
 
   delay(10);
   // agregar libreria y controlar el motor por driver
