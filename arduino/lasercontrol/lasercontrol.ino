@@ -24,7 +24,7 @@ int laserOutput[NUM_SENSORS];
 // MOTOR
 const int MOTORCONTROL = 7;
 const int MOTOR = 10;
-Stepper stepper(STEPS, 4, 5, 6, 7);
+Stepper stepper(STEPS, 2, 3, 5, 6);
 
 // SERIAL COMMUNICATION
 byte serialMsg[3];
@@ -75,15 +75,8 @@ void loop() {
     readingSum[i] -= readings[i][readingIndex[i]];
     readings[i][readingIndex[i]] = analogRead(sensorPin[i]) - ambientLight[i];
     readingSum[i] += readings[i][readingIndex[i]];
-    readingIndex[i] += 1;
-    if (readingIndex[i] >= NUM_READINGS)
-      readingIndex[i] = 0;
-  }
 
-  // calculate the readingAverage and send on serial
-  for (int i = 0; i < NUM_SENSORS; i++) {
-    readingAverage[i] = readingSum[i] / NUM_READINGS;
-    short readingAverageShort = (short)readingAverage[i];
+    short readingAverageShort = (short)readings[i][readingIndex[i]];
 
     // send 3 bytes per value: HHHH_HHHH AAAA_VVVV VVVV_VVVV
     // where HHHH_HHHH = 8-bit fixed header
@@ -97,20 +90,15 @@ void loop() {
     Serial.write(serialMsg[1]);
     Serial.write(serialMsg[2]);
     Serial.flush();
+
+    readingIndex[i] += 1;
+    if (readingIndex[i] >= NUM_READINGS)
+      readingIndex[i] = 0;
   }
 
-  // print values to serial
-  /*
+  // calculate the readingAverage
   for (int i = 0; i < NUM_SENSORS; i++) {
-    Serial.print("\t Sensor[");
-    Serial.print(i);
-    Serial.print("]: ");
-    Serial.print(readingAverage[i]);
+    readingAverage[i] = readingSum[i] / NUM_READINGS;
   }
-  */
 
-  delay(10);
-  // agregar libreria y controlar el motor por driver
 }
-
-
