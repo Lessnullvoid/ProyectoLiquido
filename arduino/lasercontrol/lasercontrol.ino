@@ -59,7 +59,7 @@ void setup() {
 
 void loop() {
   //Serial.println("Forward");
-  stepper.step(STEPS);
+  //stepper.step(STEPS);
   //Serial.println("Backward");
   //stepper.step(-STEPS);
 
