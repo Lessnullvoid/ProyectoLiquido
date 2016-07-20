@@ -1,14 +1,10 @@
-#include <Stepper.h>
 
-const int STEPS = 200;
 const int NUM_READINGS = 10;
 const int NUM_SENSORS = 5;
 const int MSG_HEADER = 0xAB;
 
 // PINS
-int laserPin[NUM_SENSORS] = {3, 4, 5, 6, 9};  // output pins for lasers
 int sensorPin[NUM_SENSORS] = {1, 2, 3, 4, 5}; // analog input pins for sensors
-const int LASER_POT_PIN = 6;                  // analog input for laser pwm control
 
 // SENSOR VARIABLES
 int readings[NUM_SENSORS][NUM_READINGS]; // reading values for each sensor
@@ -17,28 +13,13 @@ int readingSum[NUM_SENSORS];             // running sum of readings, per sensor
 int readingAverage[NUM_SENSORS];         // average value of last readings, per sensor
 int ambientLight[NUM_SENSORS];           // ambient light threshold value, per sensor
 
-// LASER VARIABLES
-int laserPotValue;
-int laserOutput[NUM_SENSORS];
-
-// MOTOR
-const int MOTORCONTROL = 7;
-const int MOTOR = 10;
-Stepper stepper(STEPS, 2, 3, 5, 6);
 
 // SERIAL COMMUNICATION
 byte serialMsg[3];
 
 void setup() {
-  Serial.begin(9600);
-  //Serial.println("stepper runing");
-  stepper.setSpeed(30);
+  Serial.begin(57600);
   serialMsg[0] = serialMsg[1] = serialMsg[2] = 0x00;
-
-  // set up laser pins as output
-  for (int i = 0; i < NUM_SENSORS; i++) {
-    pinMode(laserPin[i], OUTPUT);
-  }
 
   // init sensor reading arrays
   for (int i = 0; i < NUM_SENSORS; i++) {
@@ -58,17 +39,6 @@ void setup() {
 }
 
 void loop() {
-  //Serial.println("Forward");
-  //stepper.step(STEPS);
-  //Serial.println("Backward");
-  //stepper.step(-STEPS);
-
-  //Laser control
-  laserPotValue = analogRead(LASER_POT_PIN);
-  for (int i = 0; i < NUM_SENSORS; i++) {
-    int laserValue = map(laserPotValue, 0, 1024, 0, 255);
-    analogWrite(laserPin[i], laserValue);
-  }
 
   // sensor smoothing
   for (int i = 0; i < NUM_SENSORS; i++) {
@@ -94,11 +64,6 @@ void loop() {
     readingIndex[i] += 1;
     if (readingIndex[i] >= NUM_READINGS)
       readingIndex[i] = 0;
-  }
-
-  // calculate the readingAverage
-  for (int i = 0; i < NUM_SENSORS; i++) {
-    readingAverage[i] = readingSum[i] / NUM_READINGS;
   }
 
 }

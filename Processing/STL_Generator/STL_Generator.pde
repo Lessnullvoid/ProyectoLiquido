@@ -3,7 +3,7 @@ import unlekker.mb2.util.*;
 import ec.util.*;
 
 String DATA_LOCATION = "../../EEGdata/EEGDATA_ReducFilterIC";
-String FILENAME = "aracely_RF_ICA.csv";
+String FILENAME = "Mauricio_RF_ICA.csv";
 
 int MIN_RADIUS = 30;
 int MAX_RADIUS = MIN_RADIUS*2;

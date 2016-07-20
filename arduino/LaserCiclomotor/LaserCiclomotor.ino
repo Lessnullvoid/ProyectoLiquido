@@ -1,8 +1,8 @@
 #include <Stepper.h>
-//int led = 11;
-int led1 = 10;
-int led2 = 9;
-int led3 = 8;
+int led = 10;
+int led1 = 9;
+int led2 = 8;
+int led3 = 7;
 
 // change this to the number of steps on your motor
 #define STEPS 200
@@ -17,13 +17,13 @@ void setup()
 {
   Serial.begin(9600);
   Serial.println("Stepper test!");
- // pinMode(led, OUTPUT);
+  pinMode(led, OUTPUT);
   pinMode(led1, OUTPUT);
   pinMode(led2, OUTPUT);
-  pinMode(led3, OUTPUT);
+pinMode(led3, OUTPUT);
 
   // set the speed §of the motor to 30 RPMs
-  stepper.setSpeed(3);
+  stepper.setSpeed(5);
 }
 
 void loop()
@@ -42,31 +42,13 @@ void loop()
 
   stepper.step(STEPS);
   digitalWrite(led2, LOW);
-  digitalWrite(led3, HIGH);
+    digitalWrite(led3, HIGH);
 
-  stepper.step(STEPS);
+    stepper.step(STEPS);
   digitalWrite(led3, LOW);
-  digitalWrite(led2, HIGH);
+    digitalWrite(led, HIGH);
 
-  stepper.step(STEPS);
-  digitalWrite(led2, LOW);
-  digitalWrite(led1, HIGH);
-
-  stepper.step(STEPS);
-  digitalWrite(led1, LOW);
-  digitalWrite(led, HIGH);
-
-  stepper.step(STEPS);
-  digitalWrite(led, LOW);
-  digitalWrite(led1, HIGH);
-
-  stepper.step(STEPS);
-  digitalWrite(led1, LOW);
-  digitalWrite(led3, HIGH);
-
-  stepper.step(STEPS);
-  digitalWrite(led3, LOW);
-  digitalWrite(led, HIGH);
+  
 
 
 
